@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 const navItems = [
   { label: "ABOUT",   href: "/about",              img: "/images/menu-about.png",   external: false },
   { label: "CONTACT", href: "/contact",             img: "/images/menu-contact.png", external: false },
-  { label: "FUN",     href: "https://zkhowes.fun",  img: "/images/menu-fun.png",     external: true  },
+  { label: "FUN",     href: "/fun",                  img: "/images/menu-fun.png",     external: false },
 ];
 
 export default function Nav() {
