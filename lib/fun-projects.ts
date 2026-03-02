@@ -22,6 +22,31 @@ export const funProjects: FunProject[] = [
     tags: ["#game", "#trivia", "#multiplayer"],
   },
   {
+    name: "Yearout",
+    description:
+      "Plan, track, and relive recurring group adventure trips. Handles expenses, daily logs, awards, and a hall of fame.",
+    status: "live",
+    emoji: "🏔️",
+    url: "https://yearout.zkhowes.fun",
+    tags: ["#travel", "#groups", "#planning"],
+  },
+  {
+    name: "JustB",
+    description:
+      "A location-based daily feed powered by AI. Pick your city, browse curated content by category, and discover what's happening around you.",
+    status: "in-development",
+    emoji: "📍",
+    tags: ["#ai", "#local", "#feed"],
+  },
+  {
+    name: "SickDay",
+    description:
+      "Ski condition alerts via SMS. Monitors weather and snow data so you know exactly when to call in sick and hit the slopes.",
+    status: "concept",
+    emoji: "🎿",
+    tags: ["#alerts", "#skiing", "#sms"],
+  },
+  {
     name: "5Foot",
     description:
       "Originates from Ryan Holiday's concept of maintaining a 5-foot bookshelf — a curated collection of your favorite books you loan to people. Digital books have made this harder than it should be, so we're starting to wade into it.",
