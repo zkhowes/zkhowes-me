@@ -15,7 +15,7 @@ export default function Nav() {
 
   return (
     <nav aria-label="Main navigation">
-      <ul className="list-none flex flex-col gap-3 mt-6">
+      <ul className="list-none flex flex-col gap-3">
         {navItems.map((item) => {
           const isActive = !item.external && pathname === item.href;
           const img = (
