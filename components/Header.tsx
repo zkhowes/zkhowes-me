@@ -9,7 +9,7 @@ export default function Header() {
         alt="ZKHOWES"
         width={2635}
         height={568}
-        style={{ width: "100%", height: "auto", display: "block" }}
+        style={{ width: "auto", maxHeight: "130px", display: "block" }}
         priority
       />
     </Link>

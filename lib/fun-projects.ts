@@ -19,6 +19,7 @@ export const funProjects: FunProject[] = [
     status: "in-development",
     emoji: "🧠",
     url: "https://bwiz.zkhowes.fun",
+    image: "/images/projects/bwiz.png",
     tags: ["#game", "#trivia", "#multiplayer"],
   },
   {
@@ -28,6 +29,7 @@ export const funProjects: FunProject[] = [
     status: "live",
     emoji: "🏔️",
     url: "https://yearout.zkhowes.fun",
+    image: "/images/projects/yearout.png",
     tags: ["#travel", "#groups", "#planning"],
   },
   {
@@ -36,6 +38,7 @@ export const funProjects: FunProject[] = [
       "A location-based daily feed powered by AI. Pick your city, browse curated content by category, and discover what's happening around you.",
     status: "in-development",
     emoji: "📍",
+    url: "https://justb.zkhowes.fun",
     tags: ["#ai", "#local", "#feed"],
   },
   {
