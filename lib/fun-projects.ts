@@ -33,6 +33,14 @@ export const funProjects: FunProject[] = [
     tags: ["#travel", "#groups", "#planning"],
   },
   {
+    name: "Dare Vocem",
+    description:
+      "An AAC app for someone with aphasia. Gesture-driven composition with AI-powered word prediction and text-to-speech in the user's cloned voice. It doesn't replace the user's voice — it finishes what they start.",
+    status: "in-development",
+    emoji: "🗣️",
+    tags: ["#accessibility", "#ai", "#mobile"],
+  },
+  {
     name: "JustB",
     description:
       "A location-based daily feed powered by AI. Pick your city, browse curated content by category, and discover what's happening around you.",
