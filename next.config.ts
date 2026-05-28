@@ -1,5 +1,11 @@
 import type { NextConfig } from "next";
 
+const scriptSources = ["'self'", "'unsafe-inline'"];
+
+if (process.env.NODE_ENV === "development") {
+  scriptSources.push("'unsafe-eval'");
+}
+
 const nextConfig: NextConfig = {
   async headers() {
     return [
@@ -12,9 +18,10 @@ const nextConfig: NextConfig = {
               "default-src 'self'",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data:",
-              "script-src 'self'",
+              "img-src 'self' data: https://commons.wikimedia.org https://upload.wikimedia.org",
+              `script-src ${scriptSources.join(" ")}`,
               "connect-src 'self'",
+              "frame-src https://www.openstreetmap.org",
             ].join("; "),
           },
           {
