@@ -47,7 +47,7 @@ _Original build invoice $27,357; copy provided to serious buyers._
 - Heather-gray fabric wall panels with black accents
 - Full insulation with sound deadening throughout
 - Custom-built electrical cabin housing the power system
-- (2) Maxxair Deluxe 7500K roof fans — fore and aft
+- Maxxair Deluxe 7500K roof fan
 - CRL T-Vent driver-forward window
 - Custom interior window covers (full set)
 - Custom bug screens for sliding door and rear barn doors
@@ -80,9 +80,9 @@ _Approximately $18,000 when new._
 
 ### Climate & comfort
 
-- Espar M2-B4L diesel heater with EasyStart Pro controller
+- Espar M2-B4L gasoline heater with EasyStart Pro controller — runs off the van's main fuel tank
   - Recently serviced — new fuel filter and new ECU
-- (2) Maxxair Deluxe 7500K fans for active ventilation
+- Maxxair Deluxe 7500K fan for active ventilation
 
 ### Build philosophy — what's intentionally _not_ included
 
@@ -135,8 +135,8 @@ Professionally converted by Mammoth Vans in Kent, WA ($27,357 build invoice on f
 - Factory Ford tow hitch
 - Fiamma F45s awning
 - 200Ah lithium house battery, 2,000W inverter, shore power, solar-ready
-- (2) Maxxair Deluxe fans
-- Espar M2-B4L diesel heater (recently serviced — new fuel filter and ECU)
+- Maxxair Deluxe fan
+- Espar M2-B4L gasoline heater (runs off main fuel tank; recently serviced — new fuel filter and ECU)
 - Scopema swivel seats both sides
 - Refrigerator
 - Custom bug screens and window covers
@@ -161,7 +161,7 @@ BAT auctions live and die on the photo set. They want ~80–150 photos, in a spe
 5. Rear 3/4 both sides
 6. Direct front (showing bumper guard)
 7. Direct rear (showing ladder, badging)
-8. Top-down or step-ladder shot showing roof rack, fans, antenna
+8. Top-down or step-ladder shot showing roof rack, fan, antenna
 9. Detail: wheels and tires (each corner)
 10. Detail: AMP boards extended and retracted
 11. Detail: lift kit, suspension components
@@ -189,7 +189,7 @@ BAT auctions live and die on the photo set. They want ~80–150 photos, in a spe
 27. Electrical cabin (open showing components)
 28. Battery and inverter close-ups
 29. Shore-power inlet
-30. Maxxair fans (interior view of each)
+30. Maxxair fan (interior view)
 31. CRL T-Vent window
 32. Bug screens deployed (sliding and rear)
 33. Window covers in place
