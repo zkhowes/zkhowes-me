@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import VanhallaGallery from "@/components/vanhalla/VanhallaGallery";
+import ContactReveal from "@/components/vanhalla/ContactReveal";
 import {
   listingFileUrl,
   photoUrl,
@@ -163,14 +164,9 @@ export default async function FordTransitForSale() {
               <span>Price</span>
               <strong>$89,500</strong>
             </div>
-            <div>
-              <span>Contact</span>
-              <strong>801.449.9925</strong>
-              <small>Text preferred first</small>
-            </div>
-            <div>
-              <span>Email</span>
-              <a href="mailto:zkhowes@hotmail.com">zkhowes@hotmail.com</a>
+            <div className={styles.contactCell}>
+              <span>Contact seller</span>
+              <ContactReveal />
             </div>
             <div>
               <span>VIN</span>

@@ -89,6 +89,17 @@
   text-decoration-thickness: 2px;
 }
 
+.contactCell {
+  /* Span two columns when grid is wide enough so the reveal control breathes */
+  grid-column: span 2;
+}
+
+@media (max-width: 780px) {
+  .contactCell {
+    grid-column: span 1;
+  }
+}
+
 .listingCopy,
 .gallerySection {
   padding: clamp(22px, 4vw, 42px);

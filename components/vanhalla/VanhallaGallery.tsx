@@ -7,7 +7,7 @@ import {
   VANHALLA_CATEGORIES,
   type VanhallaPhoto,
 } from "@/lib/vanhalla-shared";
-import styles from "@/app/fordtransitforsale/page.module.css";
+import styles from "@/app/(bare)/fordtransitforsale/page.module.css";
 
 type Props = {
   initialPhotos: VanhallaPhoto[];

@@ -1,0 +1,54 @@
+.revealBtn {
+  display: inline-block;
+  border: 2px solid #202124;
+  background: #fffdf8;
+  color: #202124;
+  font: inherit;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.revealBtn:hover {
+  background: #202124;
+  color: #fffdf8;
+}
+
+.revealBtn:focus-visible {
+  outline: 3px solid #9c4d2f;
+  outline-offset: 3px;
+}
+
+.revealed {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.label {
+  color: #66645f;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.value {
+  color: #202124;
+  font-size: clamp(1.15rem, 2vw, 1.55rem);
+  font-weight: 900;
+  overflow-wrap: anywhere;
+  text-decoration-thickness: 2px;
+}
+
+.note {
+  color: #66645f;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
