@@ -130,7 +130,7 @@ export default async function FordTransitForSale() {
   ]);
   const listingMarkdown = markdown
     .replaceAll("Valhalla", "Vanhalla")
-    .replaceAll("$92,500", "$89,500");
+    .replaceAll("$92,500", "$77,500");
   const publicListingMarkdown = longFormListingOnly(listingMarkdown);
 
   const visiblePhotos = gallery.photos.filter((photo) => !photo.hidden);
@@ -162,7 +162,7 @@ export default async function FordTransitForSale() {
           <div className={styles.summaryGrid}>
             <div>
               <span>Price</span>
-              <strong>$89,500</strong>
+              <strong>$77,500</strong>
             </div>
             <div className={styles.contactCell}>
               <span>Contact seller</span>
