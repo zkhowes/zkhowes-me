@@ -13,6 +13,15 @@ export interface FunProject {
 
 export const funProjects: FunProject[] = [
   {
+    name: "Kiel Sux FIFA Tournament",
+    description:
+      "A cinematic live scoreboard for a 15-person World Cup 2026 pool. Each rival drafts three nations; standings recompute daily from real match results. $300 to the points leader — and eternal shame to Kiel.",
+    status: "live",
+    emoji: "🏆",
+    url: "/fifa",
+    tags: ["#worldcup", "#leaderboard", "#roast"],
+  },
+  {
     name: "Bwiz",
     description:
       "A trivia game where you battle friends across random topic categories. Think pub quiz meets group chat.",
