@@ -11,6 +11,8 @@ export type TeamLine = {
   name: string;
   matches: number;
   points: number;
+  alive: boolean; // still in the tournament
+  possible: number; // max points still attainable (10 per remaining round)
 };
 
 export type Standing = {
@@ -18,6 +20,7 @@ export type Standing = {
   name: string;
   photo: string;
   points: number;
+  possible: number; // sum of teams' still-attainable points (0 if all eliminated)
   teams: TeamLine[];
 };
 
@@ -75,6 +78,98 @@ function buildSide(rawTeam: string, gf: number, ga: number): MatchSide {
   };
 }
 
+// Rounds remaining (incl. the one about to be played) → how many more matches
+// a team can play from a given stage. Multiply by MAX_PER_MATCH for max points.
+const MAX_PER_MATCH = 10;
+const STAGE_ORDER: Record<string, number> = {
+  GROUP_STAGE: 0,
+  LAST_32: 1,
+  LAST_16: 2,
+  QUARTER_FINALS: 3,
+  SEMI_FINALS: 4,
+  THIRD_PLACE: 4,
+  FINAL: 5,
+};
+// Rounds left to win the title if you are ABOUT TO PLAY this stage.
+const ROUNDS_FROM_STAGE: Record<string, number> = {
+  LAST_32: 5,
+  LAST_16: 4,
+  QUARTER_FINALS: 3,
+  SEMI_FINALS: 2,
+  FINAL: 1,
+};
+const STAGE_BY_ORDER: Record<number, string> = {
+  1: "LAST_32",
+  2: "LAST_16",
+  3: "QUARTER_FINALS",
+  4: "SEMI_FINALS",
+  5: "FINAL",
+};
+
+type TeamProgress = {
+  lastFinishedStage: string | null;
+  lastResult: "W" | "L" | "T" | null;
+  upcomingOrder: number | null; // earliest scheduled round this team is named in
+};
+
+/**
+ * Build per-team tournament progress from all matches, then derive how many
+ * rounds each team can still play. A team is ALIVE if it has an upcoming named
+ * match, OR its most recent knockout match was a win (advanced but not yet
+ * slotted into the next fixture — the API leaves those opponents null).
+ */
+function buildProgress(matches: FDMatch[]): Map<string, TeamProgress> {
+  const prog = new Map<string, TeamProgress>();
+  const touch = (t: string) => {
+    if (!prog.has(t))
+      prog.set(t, { lastFinishedStage: null, lastResult: null, upcomingOrder: null });
+    return prog.get(t)!;
+  };
+
+  for (const m of matches) {
+    const hg = m.score?.fullTime?.home;
+    const ag = m.score?.fullTime?.away;
+    const sides: Array<{ raw?: string; gf: number | null; ga: number | null }> = [
+      { raw: m.homeTeam?.name, gf: hg, ga: ag },
+      { raw: m.awayTeam?.name, gf: ag, ga: hg },
+    ];
+    for (const s of sides) {
+      if (!s.raw) continue;
+      const t = canonicalTeam(s.raw);
+      const p = touch(t);
+      if (m.status === "FINISHED" && s.gf != null && s.ga != null) {
+        const order = STAGE_ORDER[m.stage] ?? -1;
+        const prevOrder = p.lastFinishedStage != null ? STAGE_ORDER[p.lastFinishedStage] : -1;
+        if (order >= prevOrder) {
+          p.lastFinishedStage = m.stage;
+          p.lastResult = s.gf > s.ga ? "W" : s.gf === s.ga ? "T" : "L";
+        }
+      } else if (m.status !== "FINISHED") {
+        const o = STAGE_ORDER[m.stage];
+        if (o != null && (p.upcomingOrder == null || o < p.upcomingOrder)) p.upcomingOrder = o;
+      }
+    }
+  }
+  return prog;
+}
+
+/** Rounds a team can still play (0 if eliminated / not applicable). */
+function roundsRemaining(prog: Map<string, TeamProgress>, team: string): number {
+  const p = prog.get(team);
+  if (!p) return 0;
+  // Named in an upcoming match → remaining counts from that stage.
+  if (p.upcomingOrder != null) {
+    const stage = STAGE_BY_ORDER[p.upcomingOrder];
+    return ROUNDS_FROM_STAGE[stage] ?? 0;
+  }
+  // Otherwise alive only if the last knockout match was a win (awaiting slotting).
+  const lf = p.lastFinishedStage;
+  if (!lf || lf === "GROUP_STAGE") return 0;
+  if (p.lastResult !== "W") return 0;
+  const nextStage = STAGE_BY_ORDER[(STAGE_ORDER[lf] ?? 0) + 1];
+  return ROUNDS_FROM_STAGE[nextStage] ?? 0;
+}
+
 const FOOTBALL_DATA_URL =
   "https://api.football-data.org/v4/competitions/WC/matches";
 
@@ -85,7 +180,8 @@ function baselineStandings(nowISO: string): StandingsResult {
     name: p.name,
     photo: p.photo,
     points: p.baseline,
-    teams: p.teams.map((t) => ({ name: t, matches: 0, points: 0 })),
+    possible: 0, // unknown without live bracket data
+    teams: p.teams.map((t) => ({ name: t, matches: 0, points: 0, alive: false, possible: 0 })),
   })).sort((a, b) => b.points - a.points);
 
   return {
@@ -130,11 +226,23 @@ export async function computeStandings(nowISO: string): Promise<StandingsResult>
 
   if (finished.length === 0) return baselineStandings(nowISO);
 
+  // Per-team tournament progress (uses ALL matches, incl. upcoming fixtures).
+  const progress = buildProgress(matches);
+
   // Accumulators keyed by player id → team name → line.
   const acc = new Map<string, Map<string, TeamLine>>();
   for (const p of PLAYERS) {
     const teamMap = new Map<string, TeamLine>();
-    for (const t of p.teams) teamMap.set(t, { name: t, matches: 0, points: 0 });
+    for (const t of p.teams) {
+      const rounds = roundsRemaining(progress, t);
+      teamMap.set(t, {
+        name: t,
+        matches: 0,
+        points: 0,
+        alive: rounds > 0,
+        possible: rounds * MAX_PER_MATCH,
+      });
+    }
     acc.set(p.id, teamMap);
   }
 
@@ -164,7 +272,8 @@ export async function computeStandings(nowISO: string): Promise<StandingsResult>
     const teamMap = acc.get(p.id)!;
     const teams = p.teams.map((t) => teamMap.get(t)!);
     const points = teams.reduce((s, t) => s + t.points, 0);
-    return { id: p.id, name: p.name, photo: p.photo, points, teams };
+    const possible = teams.reduce((s, t) => s + t.possible, 0);
+    return { id: p.id, name: p.name, photo: p.photo, points, possible, teams };
   }).sort((a, b) => b.points - a.points);
 
   // Recent match days. Knockout days can be a single fixture, which looks thin

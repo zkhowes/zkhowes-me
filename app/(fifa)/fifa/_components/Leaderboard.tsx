@@ -20,11 +20,21 @@ function TeamBadges({ teams }: { teams: Standing["teams"] }) {
         <span
           key={t.name}
           className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs f-num tracking-wide"
-          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--f-line)" }}
-          title={`${t.name} — ${t.points} pts from ${t.matches} match${t.matches === 1 ? "" : "es"}`}
+          style={{
+            background: "rgba(255,255,255,0.05)",
+            border: "1px solid var(--f-line)",
+            opacity: t.alive ? 1 : 0.45,
+          }}
+          title={
+            t.alive
+              ? `${t.name} — ${t.points} pts · still alive (up to +${t.possible})`
+              : `${t.name} — ${t.points} pts · eliminated`
+          }
         >
           <span className="text-sm leading-none">{TEAM_FLAGS[t.name] ?? "⚽"}</span>
-          <span className="text-[var(--f-cream)]">{t.name}</span>
+          <span className={t.alive ? "text-[var(--f-cream)]" : "text-[var(--f-muted)] line-through decoration-1"}>
+            {t.name}
+          </span>
           <span className="text-[var(--f-gold)]">{t.points}</span>
         </span>
       ))}
@@ -81,9 +91,17 @@ function Row({ s, rank, isLast }: { s: Standing; rank: number; isLast: boolean }
           </div>
         </div>
 
-        <div className="text-right shrink-0">
-          <div className="f-num text-2xl sm:text-3xl text-[var(--f-gold)]">{s.points}</div>
-          <div className="f-eyebrow text-[0.55rem] tracking-[0.2em] text-[var(--f-muted)]">pts</div>
+        <div className="text-right shrink-0 flex items-baseline gap-1.5">
+          <div>
+            <div className="f-num text-2xl sm:text-3xl text-[var(--f-gold)] leading-none">{s.points}</div>
+            <div className="f-eyebrow text-[0.55rem] tracking-[0.2em] text-[var(--f-muted)] mt-1">pts</div>
+          </div>
+          <div
+            className="f-num text-xs leading-none text-[var(--f-muted)]/70"
+            title={s.possible > 0 ? `Up to ${s.possible} more points still attainable` : "All teams eliminated — no points left to earn"}
+          >
+            +{s.possible}
+          </div>
         </div>
 
         <span className={`text-[var(--f-muted)] transition-transform ${open ? "rotate-180" : ""}`}>▾</span>
@@ -98,12 +116,17 @@ function Row({ s, rank, isLast }: { s: Standing; rank: number; isLast: boolean }
         <div className="px-5 pb-4 pt-1 border-t border-[var(--f-line)]">
           <div className="grid grid-cols-3 gap-3 pt-3">
             {s.teams.map((t) => (
-              <div key={t.name} className="text-center">
+              <div key={t.name} className="text-center" style={{ opacity: t.alive ? 1 : 0.5 }}>
                 <div className="text-2xl">{TEAM_FLAGS[t.name] ?? "⚽"}</div>
-                <div className="text-xs text-[var(--f-cream)] mt-1">{t.name}</div>
+                <div className={`text-xs mt-1 ${t.alive ? "text-[var(--f-cream)]" : "text-[var(--f-muted)] line-through decoration-1"}`}>
+                  {t.name}
+                </div>
                 <div className="f-num text-lg text-[var(--f-gold)]">{t.points}</div>
                 <div className="text-[0.6rem] text-[var(--f-muted)]">
                   {t.matches} match{t.matches === 1 ? "" : "es"}
+                </div>
+                <div className="text-[0.6rem] mt-0.5" style={{ color: t.alive ? "var(--f-gold)" : "var(--f-blood)" }}>
+                  {t.alive ? `alive · +${t.possible}` : "eliminated"}
                 </div>
               </div>
             ))}

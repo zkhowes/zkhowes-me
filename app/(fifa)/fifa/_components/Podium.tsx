@@ -56,9 +56,15 @@ export default function Podium({ top3 }: { top3: Standing[] }) {
                   {p.name}
                 </h3>
 
-                <div className="flex items-baseline gap-1 mt-1">
+                <div className="flex items-baseline gap-1.5 mt-1">
                   <CountUp value={p.points} className="f-num text-4xl text-[var(--f-cream)]" />
                   <span className="f-eyebrow text-[0.6rem] tracking-[0.2em] text-[var(--f-muted)]">pts</span>
+                  <span
+                    className="f-num text-xs text-[var(--f-muted)]/70 ml-0.5"
+                    title={p.possible > 0 ? `Up to ${p.possible} more points still attainable` : "All teams eliminated"}
+                  >
+                    +{p.possible}
+                  </span>
                 </div>
 
                 {i === 0 && (
