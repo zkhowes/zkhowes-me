@@ -50,6 +50,7 @@ export type StandingsResult = {
   unresolvedTeams: string[];
   latestDay: string | null; // yyyy-mm-dd of the most recent finished day
   latestMatches: DayMatch[]; // fixtures from that day, with player impact
+  tournamentComplete: boolean; // true once the FINAL has been played
 };
 
 type FDMatch = {
@@ -192,6 +193,7 @@ function baselineStandings(nowISO: string): StandingsResult {
     unresolvedTeams: [],
     latestDay: null,
     latestMatches: [],
+    tournamentComplete: false,
   };
 }
 
@@ -317,6 +319,10 @@ export async function computeStandings(nowISO: string): Promise<StandingsResult>
       return xi - yi;
     });
 
+  const tournamentComplete = matches.some(
+    (m) => m.stage === "FINAL" && m.status === "FINISHED"
+  );
+
   return {
     standings,
     lastUpdated: nowISO,
@@ -325,5 +331,6 @@ export async function computeStandings(nowISO: string): Promise<StandingsResult>
     unresolvedTeams: [...unresolved],
     latestDay,
     latestMatches,
+    tournamentComplete,
   };
 }

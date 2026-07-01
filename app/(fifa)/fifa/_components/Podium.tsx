@@ -4,12 +4,18 @@ import { STAKES } from "../_data/tournament";
 import type { Standing } from "../_data/standings";
 
 const TIERS = [
-  { key: "gold",   ring: "#ffd76a", glow: "rgba(255,215,106,0.55)", label: "Champion",   order: "sm:order-2", scale: "sm:scale-[1.14]", plinth: 160 },
-  { key: "silver", ring: "#cfd3dc", glow: "rgba(207,211,220,0.4)",  label: "Runner-Up",  order: "sm:order-1", scale: "",               plinth: 118 },
-  { key: "bronze", ring: "#cd8a4e", glow: "rgba(205,138,78,0.4)",   label: "Third",      order: "sm:order-3", scale: "",               plinth: 92 },
+  { key: "gold",   ring: "#ffd76a", glow: "rgba(255,215,106,0.55)", inProgress: "1st Place", final: "Champion",   order: "sm:order-2", scale: "sm:scale-[1.14]", plinth: 160 },
+  { key: "silver", ring: "#cfd3dc", glow: "rgba(207,211,220,0.4)",  inProgress: "2nd Place", final: "Runner-Up",  order: "sm:order-1", scale: "",               plinth: 118 },
+  { key: "bronze", ring: "#cd8a4e", glow: "rgba(205,138,78,0.4)",   inProgress: "3rd Place", final: "Third",      order: "sm:order-3", scale: "",               plinth: 92 },
 ] as const;
 
-export default function Podium({ top3 }: { top3: Standing[] }) {
+export default function Podium({
+  top3,
+  complete = false,
+}: {
+  top3: Standing[];
+  complete?: boolean;
+}) {
   return (
     <section className="px-5 pt-4 pb-8 sm:pb-16">
       <div className="mx-auto max-w-5xl">
@@ -23,12 +29,13 @@ export default function Podium({ top3 }: { top3: Standing[] }) {
                 style={{ animationDelay: `${0.2 + i * 0.18}s` }}
               >
                 <span className="f-eyebrow mb-3" style={{ color: tier.ring }}>
-                  {tier.label}
+                  {complete ? tier.final : tier.inProgress}
                 </span>
 
                 {/* portrait */}
                 <div className="relative">
-                  {i === 0 && (
+                  {/* crown only crowns a true champion — i.e. once it's over */}
+                  {i === 0 && complete && (
                     <span className="absolute -top-9 left-1/2 -translate-x-1/2 text-4xl" style={{ animation: "f-glow 2.4s ease-in-out infinite" }}>
                       👑
                     </span>
@@ -73,19 +80,15 @@ export default function Podium({ top3 }: { top3: Standing[] }) {
                   </span>
                 )}
 
-                {/* plinth */}
+                {/* plinth — the tiered platform; number lives on the portrait */}
                 <div
-                  className="mt-4 w-full max-w-[220px] f-panel flex items-center justify-center"
+                  className="mt-4 w-full max-w-[220px] f-panel"
                   style={{
                     height: tier.plinth,
                     borderColor: `${tier.ring}55`,
                     background: `linear-gradient(180deg, ${tier.glow}, transparent 70%), linear-gradient(180deg, var(--f-panel-2), var(--f-panel))`,
                   }}
-                >
-                  <span className="f-display text-5xl sm:text-6xl" style={{ color: `${tier.ring}88` }}>
-                    {i + 1}
-                  </span>
-                </div>
+                />
               </div>
             );
           })}

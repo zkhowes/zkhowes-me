@@ -23,7 +23,7 @@ function formatSynced(iso: string) {
 }
 
 export default async function FifaPage() {
-  const { standings, lastUpdated, source, finishedMatches, latestDay, latestMatches } =
+  const { standings, lastUpdated, source, finishedMatches, latestDay, latestMatches, tournamentComplete } =
     await computeStandings(new Date().toISOString());
 
   const top3 = standings.slice(0, 3);
@@ -33,7 +33,7 @@ export default async function FifaPage() {
   return (
     <main>
       <Hero nations={nations} />
-      <Podium top3={top3} />
+      <Podium top3={top3} complete={tournamentComplete} />
       <MatchDay day={latestDay} matches={latestMatches} />
       <MoneyPanel leader={standings[0]?.name ?? "—"} />
       <Leaderboard rest={rest} />
