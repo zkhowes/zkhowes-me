@@ -1,12 +1,12 @@
 import Image from "next/image";
 import CountUp from "./CountUp";
-import { STAKES } from "../_data/tournament";
+import { STAKES, TEAM_FLAGS } from "../_data/tournament";
 import type { Standing } from "../_data/standings";
 
 const TIERS = [
-  { key: "gold",   ring: "#ffd76a", glow: "rgba(255,215,106,0.55)", inProgress: "1st Place", final: "Champion",   order: "sm:order-2", scale: "sm:scale-[1.14]", plinth: 160 },
-  { key: "silver", ring: "#cfd3dc", glow: "rgba(207,211,220,0.4)",  inProgress: "2nd Place", final: "Runner-Up",  order: "sm:order-1", scale: "",               plinth: 118 },
-  { key: "bronze", ring: "#cd8a4e", glow: "rgba(205,138,78,0.4)",   inProgress: "3rd Place", final: "Third",      order: "sm:order-3", scale: "",               plinth: 92 },
+  { key: "gold",   ring: "#ffd76a", glow: "rgba(255,215,106,0.55)", inProgress: "1st Place", final: "Champion",   order: "sm:order-2", scale: "sm:scale-[1.14]" },
+  { key: "silver", ring: "#cfd3dc", glow: "rgba(207,211,220,0.4)",  inProgress: "2nd Place", final: "Runner-Up",  order: "sm:order-1", scale: ""               },
+  { key: "bronze", ring: "#cd8a4e", glow: "rgba(205,138,78,0.4)",   inProgress: "3rd Place", final: "Third",      order: "sm:order-3", scale: ""               },
 ] as const;
 
 export default function Podium({
@@ -80,15 +80,31 @@ export default function Podium({
                   </span>
                 )}
 
-                {/* plinth — the tiered platform; number lives on the portrait */}
-                <div
-                  className="mt-4 w-full max-w-[220px] f-panel"
-                  style={{
-                    height: tier.plinth,
-                    borderColor: `${tier.ring}55`,
-                    background: `linear-gradient(180deg, ${tier.glow}, transparent 70%), linear-gradient(180deg, var(--f-panel-2), var(--f-panel))`,
-                  }}
-                />
+                {/* the player's drafted teams */}
+                <div className="mt-4 flex flex-wrap justify-center gap-1.5 max-w-[240px]">
+                  {p.teams.map((t) => (
+                    <span
+                      key={t.name}
+                      className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[0.7rem] f-num tracking-wide"
+                      style={{
+                        background: "rgba(255,255,255,0.05)",
+                        border: `1px solid ${tier.ring}33`,
+                        opacity: t.alive ? 1 : 0.45,
+                      }}
+                      title={
+                        t.alive
+                          ? `${t.name} — ${t.points} pts · still alive (up to +${t.possible})`
+                          : `${t.name} — ${t.points} pts · eliminated`
+                      }
+                    >
+                      <span className="text-xs leading-none">{TEAM_FLAGS[t.name] ?? "⚽"}</span>
+                      <span className={t.alive ? "text-[var(--f-cream)]" : "text-[var(--f-muted)] line-through decoration-1"}>
+                        {t.name}
+                      </span>
+                      <span className="text-[var(--f-gold)]">{t.points}</span>
+                    </span>
+                  ))}
+                </div>
               </div>
             );
           })}
