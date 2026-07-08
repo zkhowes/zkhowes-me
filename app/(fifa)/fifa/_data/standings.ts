@@ -42,6 +42,30 @@ export type DayMatch = {
   away: MatchSide;
 };
 
+/** A knockout fixture positioned in the bracket. Sides are null until the
+ *  tournament fills them in (SF/Final start empty → rendered as placeholders). */
+export type BracketMatch = {
+  slot: string; // "M97".."M104" — bracket position label
+  stage: string;
+  date: string | null; // ISO date (yyyy-mm-dd), null if unscheduled
+  time: string | null; // "HH:mm" UTC, null if unscheduled
+  status: string; // FINISHED | TIMED | SCHEDULED | ...
+  home: MatchSide | null;
+  away: MatchSide | null;
+  homeWon: boolean;
+  awayWon: boolean;
+  played: boolean;
+};
+
+/** The knockout tree, grouped for a left/center/right bracket render. */
+export type Bracket = {
+  leftQF: BracketMatch[]; // top-left, bottom-left quarter-finals
+  rightQF: BracketMatch[]; // top-right, bottom-right quarter-finals
+  semis: BracketMatch[]; // [left SF, right SF]
+  final: BracketMatch | null;
+  thirdPlace: BracketMatch | null;
+};
+
 export type StandingsResult = {
   standings: Standing[];
   lastUpdated: string;
@@ -50,10 +74,12 @@ export type StandingsResult = {
   unresolvedTeams: string[];
   latestDay: string | null; // yyyy-mm-dd of the most recent finished day
   latestMatches: DayMatch[]; // fixtures from that day, with player impact
+  bracket: Bracket | null; // knockout tree (null on baseline / no KO data)
   tournamentComplete: boolean; // true once the FINAL has been played
 };
 
 type FDMatch = {
+  id: number;
   status: string;
   utcDate: string;
   stage: string;
@@ -171,6 +197,62 @@ function roundsRemaining(prog: Map<string, TeamProgress>, team: string): number 
   return ROUNDS_FROM_STAGE[nextStage] ?? 0;
 }
 
+/** Build one bracket match from a raw fixture. A side with no named team
+ *  (SF/Final before they're filled) becomes null → rendered as a placeholder. */
+function buildBracketMatch(slot: string, m: FDMatch): BracketMatch {
+  const hg = m.score?.fullTime?.home;
+  const ag = m.score?.fullTime?.away;
+  const played =
+    m.status === "FINISHED" && hg != null && ag != null;
+  const hasHome = !!m.homeTeam?.name;
+  const hasAway = !!m.awayTeam?.name;
+  return {
+    slot,
+    stage: m.stage,
+    date: m.utcDate ? m.utcDate.slice(0, 10) : null,
+    time: m.utcDate ? m.utcDate.slice(11, 16) : null,
+    status: m.status,
+    home: hasHome ? buildSide(m.homeTeam.name, hg ?? 0, ag ?? 0) : null,
+    away: hasAway ? buildSide(m.awayTeam.name, ag ?? 0, hg ?? 0) : null,
+    homeWon: played && (hg as number) > (ag as number),
+    awayWon: played && (ag as number) > (hg as number),
+    played,
+  };
+}
+
+/** Assemble the knockout tree from all matches. Matches within a stage are
+ *  ordered by kickoff then id so slot labels stay stable across syncs. */
+function buildBracket(matches: FDMatch[]): Bracket | null {
+  const byStage = (stage: string) =>
+    matches
+      .filter((m) => m.stage === stage)
+      .sort((a, b) =>
+        a.utcDate !== b.utcDate ? a.utcDate.localeCompare(b.utcDate) : a.id - b.id
+      );
+
+  const qf = byStage("QUARTER_FINALS");
+  const sf = byStage("SEMI_FINALS");
+  const tp = byStage("THIRD_PLACE");
+  const fn = byStage("FINAL");
+
+  if (qf.length === 0 && sf.length === 0 && fn.length === 0) return null;
+
+  // Slot labels mirror the standard WC bracket (M97..M104).
+  const qfMatches = qf.map((m, i) => buildBracketMatch(`M${97 + i}`, m));
+  const sfMatches = sf.map((m, i) => buildBracketMatch(`M${101 + i}`, m));
+  const thirdPlace = tp[0] ? buildBracketMatch("M103", tp[0]) : null;
+  const final = fn[0] ? buildBracketMatch("M104", fn[0]) : null;
+
+  return {
+    // top-left & bottom-left feed the left semi; top-right & bottom-right the right.
+    leftQF: [qfMatches[0], qfMatches[1]].filter(Boolean) as BracketMatch[],
+    rightQF: [qfMatches[2], qfMatches[3]].filter(Boolean) as BracketMatch[],
+    semis: sfMatches,
+    final,
+    thirdPlace,
+  };
+}
+
 const FOOTBALL_DATA_URL =
   "https://api.football-data.org/v4/competitions/WC/matches";
 
@@ -193,6 +275,7 @@ function baselineStandings(nowISO: string): StandingsResult {
     unresolvedTeams: [],
     latestDay: null,
     latestMatches: [],
+    bracket: null,
     tournamentComplete: false,
   };
 }
@@ -331,6 +414,7 @@ export async function computeStandings(nowISO: string): Promise<StandingsResult>
     unresolvedTeams: [...unresolved],
     latestDay,
     latestMatches,
+    bracket: buildBracket(matches),
     tournamentComplete,
   };
 }

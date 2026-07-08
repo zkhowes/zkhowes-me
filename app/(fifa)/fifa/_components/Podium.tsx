@@ -64,14 +64,25 @@ export default function Podium({
                 </h3>
 
                 <div className="flex items-baseline gap-1.5 mt-1">
-                  <CountUp value={p.points} className="f-num text-4xl text-[var(--f-cream)]" />
-                  <span className="f-eyebrow text-[0.6rem] tracking-[0.2em] text-[var(--f-muted)]">pts</span>
+                  <CountUp
+                    value={p.points}
+                    className="f-num text-4xl"
+                    style={{ color: p.possible === 0 ? "var(--f-silver)" : "var(--f-cream)" }}
+                  />
                   <span
-                    className="f-num text-xs text-[var(--f-muted)]/70 ml-0.5"
-                    title={p.possible > 0 ? `Up to ${p.possible} more points still attainable` : "All teams eliminated"}
+                    className="f-eyebrow text-[0.6rem] tracking-[0.2em]"
+                    style={{ color: p.possible === 0 ? "var(--f-silver)" : "var(--f-muted)" }}
                   >
-                    +{p.possible}
+                    {p.possible === 0 ? "final" : "pts"}
                   </span>
+                  {p.possible > 0 && (
+                    <span
+                      className="f-num text-xs text-[var(--f-muted)]/70 ml-0.5"
+                      title={`Up to ${p.possible} more points still attainable`}
+                    >
+                      +{p.possible}
+                    </span>
+                  )}
                 </div>
 
                 {i === 0 && (

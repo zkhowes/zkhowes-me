@@ -91,18 +91,36 @@ function Row({ s, rank, isLast }: { s: Standing; rank: number; isLast: boolean }
           </div>
         </div>
 
-        <div className="text-right shrink-0 flex items-baseline gap-1.5">
-          <div>
-            <div className="f-num text-2xl sm:text-3xl text-[var(--f-gold)] leading-none">{s.points}</div>
-            <div className="f-eyebrow text-[0.55rem] tracking-[0.2em] text-[var(--f-muted)] mt-1">pts</div>
-          </div>
-          <div
-            className="f-num text-xs leading-none text-[var(--f-muted)]/70"
-            title={s.possible > 0 ? `Up to ${s.possible} more points still attainable` : "All teams eliminated — no points left to earn"}
-          >
-            +{s.possible}
-          </div>
-        </div>
+        {(() => {
+          const finalScore = s.possible === 0;
+          return (
+            <div className="text-right shrink-0 flex items-baseline gap-1.5">
+              <div>
+                <div
+                  className="f-num text-2xl sm:text-3xl leading-none"
+                  style={{ color: finalScore ? "var(--f-silver)" : "var(--f-gold)" }}
+                  title={finalScore ? "Final score — all teams eliminated" : undefined}
+                >
+                  {s.points}
+                </div>
+                <div
+                  className="f-eyebrow text-[0.55rem] tracking-[0.2em] mt-1"
+                  style={{ color: finalScore ? "var(--f-silver)" : "var(--f-muted)" }}
+                >
+                  {finalScore ? "final" : "pts"}
+                </div>
+              </div>
+              {!finalScore && (
+                <div
+                  className="f-num text-xs leading-none text-[var(--f-muted)]/70"
+                  title={`Up to ${s.possible} more points still attainable`}
+                >
+                  +{s.possible}
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         <span className={`text-[var(--f-muted)] transition-transform ${open ? "rotate-180" : ""}`}>▾</span>
       </button>

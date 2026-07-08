@@ -1,5 +1,6 @@
 import Hero from "./_components/Hero";
 import Podium from "./_components/Podium";
+import Bracket from "./_components/Bracket";
 import MatchDay from "./_components/MatchDay";
 import Leaderboard from "./_components/Leaderboard";
 import MoneyPanel from "./_components/MoneyPanel";
@@ -23,7 +24,7 @@ function formatSynced(iso: string) {
 }
 
 export default async function FifaPage() {
-  const { standings, lastUpdated, source, finishedMatches, latestDay, latestMatches, tournamentComplete } =
+  const { standings, lastUpdated, source, finishedMatches, latestDay, latestMatches, bracket, tournamentComplete } =
     await computeStandings(new Date().toISOString());
 
   const top3 = standings.slice(0, 3);
@@ -34,9 +35,10 @@ export default async function FifaPage() {
     <main>
       <Hero nations={nations} />
       <Podium top3={top3} complete={tournamentComplete} />
+      <Bracket bracket={bracket} />
       <MatchDay day={latestDay} matches={latestMatches} />
-      <MoneyPanel leader={standings[0]?.name ?? "—"} />
       <Leaderboard rest={rest} />
+      <MoneyPanel leader={standings[0]?.name ?? "—"} />
 
       {/* sync + ledger note */}
       <footer className="px-5 pb-16 text-center">
