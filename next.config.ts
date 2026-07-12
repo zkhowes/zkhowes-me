@@ -38,6 +38,23 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        // The live tournament page must never be served stale from a browser
+        // cache. Keep it fresh in the browser (no-store) while still letting the
+        // Vercel edge hold a ~60s copy to absorb load. Pairs with the page's
+        // revalidate = 60.
+        source: "/fifa",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-store, must-revalidate",
+          },
+          {
+            key: "CDN-Cache-Control",
+            value: "public, s-maxage=60, stale-while-revalidate=300",
+          },
+        ],
+      },
     ];
   },
 };
