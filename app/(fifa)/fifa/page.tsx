@@ -7,8 +7,10 @@ import MoneyPanel from "./_components/MoneyPanel";
 import { computeStandings } from "./_data/standings";
 import { PLAYERS } from "./_data/tournament";
 
-// Recompute hourly on the server (matches the API route / upstream cache).
-export const revalidate = 3600;
+// Re-render at most once a minute during the tournament so possible-points
+// never lag a played match by more than ~60s (upstream football-data is still
+// fetched with its own hourly revalidate, so this adds no API-rate pressure).
+export const revalidate = 60;
 
 function formatSynced(iso: string) {
   try {
