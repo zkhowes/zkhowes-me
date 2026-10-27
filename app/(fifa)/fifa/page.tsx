@@ -4,6 +4,7 @@ import Bracket from "./_components/Bracket";
 import MatchDay from "./_components/MatchDay";
 import Leaderboard from "./_components/Leaderboard";
 import MoneyPanel from "./_components/MoneyPanel";
+import KielLast from "./_components/KielLast";
 import { computeStandings } from "./_data/standings";
 import { PLAYERS } from "./_data/tournament";
 
@@ -37,6 +38,7 @@ export default async function FifaPage() {
     <main>
       <Hero nations={nations} />
       <Podium top3={top3} complete={tournamentComplete} />
+      {tournamentComplete && <KielLast />}
       <Bracket bracket={bracket} />
       <MatchDay day={latestDay} matches={latestMatches} />
       <Leaderboard rest={rest} />
